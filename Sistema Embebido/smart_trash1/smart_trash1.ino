@@ -8,9 +8,9 @@ byte rgbRojo = 11;
 byte rgbVerde = 10;
 byte rgbAzul = 9;
 
-byte pir3 = 7; // detecta modo (arriba)
-byte pir2 = 6; // detecta nivel (adentro)
-byte pir1 = 5; // detecta cercania de la persona (adelante)
+byte ir = 7; // adentro
+byte pir2 = 6; // hacia arriba
+byte pir1 = 5; // hacia adelante
 
 byte microServo = 4;
 byte piezoBuzzer = 3;
@@ -20,6 +20,7 @@ byte fotoResistor = A0;
 int contadorBasura = 0;
 Servo servo;
 
+//Constantes de la Marcha Imperial
 const float c = 261.63; // Do (Octava 0)
 const float d = 293.66; // Re (Octava 0)
 const float e = 329.63; // Mi (Octava 0)
@@ -49,7 +50,7 @@ void setup()
   pinMode(rgbVerde, OUTPUT);
   pinMode(rgbAzul, OUTPUT);
   
-  pinMode(pir3, INPUT);
+  pinMode(ir, INPUT);
   pinMode(pir2, INPUT);
   pinMode(pir1, INPUT);
   
@@ -60,44 +61,38 @@ void setup()
   servo.write(0);
   digitalWrite(ledVerde, HIGH);
   Serial.begin(9600);
-  for(int i = 0; i <= 100; i++){
-    delay(100);
+
+  for(int i = 0; i > 30; i++) //calibrar
+  {
+    delay(1000);
   }
+  delay(50);
 }
 
 void loop()
 {
-  if( digitalRead(pir1) == HIGH){
-      Serial.println("tapa abierta");
-        servo.write(180);
-      /*if(digitalRead(pir2) == HIGH){
-        contadorBasura++;
-        digitalWrite(ledVerde, LOW);
-        digitalWrite(ledAzul, HIGH);
-      }*/
-  }else{
-     servo.write(0);
-     Serial.println("tapa cerrada");
-     /*if(digitalRead(pir2) == HIGH){
-        digitalWrite(ledAzul, LOW);
-        digitalWrite(ledRojo, HIGH);
-     }*/
-  }
   
-//  noTone(piezoBuzzer);
-  if(digitalRead(pulsador) == HIGH){
-    digitalWrite(ledVerde, HIGH);
-    digitalWrite(ledAzul, LOW);
-    digitalWrite(ledRojo, LOW);
-    contadorBasura = 0;
-    digitalWrite(piezoBuzzer,LOW);
-  }else{
-    digitalWrite(piezoBuzzer,HIGH);
-  }
+  //DeteccionPirDelantero();
+  //AbrirCerrarTapa():  
+  //efectoRGB();  
+  //MarchaImperial(); 
+}
 
-  //efectoRGB();
-  
-  //marchaImperial(); 
+void DeteccionPirDelantero(){
+  if(digitalRead(pir1) == HIGH){
+    digitalWrite(ledVerde, HIGH);
+    digitalWrite(ledRojo, LOW);
+  }else{
+    digitalWrite(ledVerde, LOW);
+    digitalWrite(ledRojo, HIGH);
+  }
+}
+
+void AbrirCerrarTapa(){
+    servo.write(0);
+    delay(500);
+    servo.write(180);
+    delay(500);
 }
 
 void efectoRGB(){
@@ -131,7 +126,8 @@ void efectoRGB(){
   }
 }
 
-void marchaImperial()
+//MarchaImperial
+void MarchaImperial()
 {
   primeraSeccion();
 
