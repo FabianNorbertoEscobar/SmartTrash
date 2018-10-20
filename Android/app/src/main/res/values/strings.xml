@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SmartTrash</string>
+    <string name="tituloApp">Smart Trash</string>
+    <string name="titulobtnAjustes">Ajustes</string>
+</resources>
