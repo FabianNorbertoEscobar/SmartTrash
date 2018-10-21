@@ -1,26 +1,28 @@
 #include<Servo.h>
 
-byte ledVerde = 13;
-byte ledAzul = 12;
-byte ledRojo = 8;
+//pines
+byte ledVerde = 13; // tacho con espacio
+byte ledAzul = 12; // tapa abierta
+byte ledRojo = 8; // tacho lleno
 
-byte rgbRojo = 11;
-byte rgbVerde = 10;
-byte rgbAzul = 9;
+byte rgbRojo = 11; 
+byte rgbAzul = 10; 
+byte rgbVerde = 9; // cambio de color según luz del ambiente
 
-byte ir = 7; // adentro
-byte pir2 = 6; // hacia arriba
-byte pir1 = 5; // hacia adelante
+byte ir = 7; // adentro (nivel)
+byte pir2 = 6; // arriba (proximidad)
+byte pir1 = 5; // adelante (proximidad)
 
-byte microServo = 4;
-byte piezoBuzzer = 3;
-byte pulsador = 2;
-byte fotoResistor = A0;
+byte microServo = 4; // controlador de la tapa
+byte piezoBuzzer = 3; // alarma marcha imperial
+byte pulsador = 2; // vaciar tacho
+byte fotoResistor = A0; // luz del ambiente
 
-int contadorBasura = 0;
+//variables
 Servo servo;
+int papeles = 0;
 
-//Constantes de la Marcha Imperial
+//frecuencias de la marcha imperial
 const float c = 261.63; // Do (Octava 0)
 const float d = 293.66; // Re (Octava 0)
 const float e = 329.63; // Mi (Octava 0)
@@ -42,6 +44,7 @@ const float aH = 880.00; // La (Octava 1)
 
 void setup()
 {
+  //modo de los pines
   pinMode(ledVerde, OUTPUT);
   pinMode(ledAzul, OUTPUT);
   pinMode(ledRojo, OUTPUT);
@@ -57,12 +60,14 @@ void setup()
   servo.attach(microServo);
   pinMode(piezoBuzzer, OUTPUT);
   pinMode(pulsador, INPUT);
-  
+
+  //inicializar componentes
+  Serial.begin(9600);
   servo.write(0);
   digitalWrite(ledVerde, HIGH);
-  Serial.begin(9600);
 
-  for(int i = 0; i > 30; i++) //calibrar
+  //calibrar pir
+  for(int i = 0; i > 30; i++)
   {
     delay(1000);
   }
@@ -70,64 +75,61 @@ void setup()
 }
 
 void loop()
-{
-  
-  //DeteccionPirDelantero();
-  //AbrirCerrarTapa():  
-  //efectoRGB();  
-  //MarchaImperial(); 
-}
-
-void DeteccionPirDelantero(){
-  if(digitalRead(pir1) == HIGH){
-    digitalWrite(ledVerde, HIGH);
-    digitalWrite(ledRojo, LOW);
+{ 
+  if(detectaProximidad() && !tachoLleno()){
+    abrirTacho();
+    tirarPapel();
   }else{
-    digitalWrite(ledVerde, LOW);
-    digitalWrite(ledRojo, HIGH);
+    cerrarTacho();
+  }
+
+  if(tachoLleno()){
+    alarma();
+  }
+  
+  if(pulsadorPresionado){
+    vaciarTacho();
+  }
+
+  if(muchaLuz()){
+    darkblueRGB();
+  }else{
+    magentaRGB();
   }
 }
 
-void AbrirCerrarTapa(){
-    servo.write(0);
-    delay(500);
-    servo.write(180);
-    delay(500);
+boolean detectaProximidad(){
+  return digitalRead(pir1)|| digitalRead(pir2);
 }
 
-void efectoRGB(){
-  analogWrite(rgbRojo, 255);
-  analogWrite(rgbVerde, 204);
-  analogWrite(rgbAzul, 102);
-  
-  delay(100);
-  
-  
-  analogWrite(rgbRojo, 51);
-  analogWrite(rgbVerde, 204);
-  analogWrite(rgbAzul, 255);
-  
-  delay(100);
-  
-  for(int i = 0; i < 10; i++){
-     
-    analogWrite(rgbRojo, 255);
-    analogWrite(rgbVerde, 0);
-    analogWrite(rgbAzul, 0);
-     
-    delay(100);
-      
-    
-    analogWrite(rgbRojo, 255);
-    analogWrite(rgbVerde, 255);
-    analogWrite(rgbAzul, 255);
-    
-    delay(100);
-  }
+boolean tachoLleno(){
+  return digitalRead(ir);
 }
 
-//MarchaImperial
-void MarchaImperial()
+void abrirTacho(){
+  servo.write(0);
+  digitalWrite(ledAzul, HIGH);
+  delay(500);
+}
+
+void tirarPapel(){
+  papeles++;
+}
+
+void cerrarTacho(){
+  servo.write(180);
+  digitalWrite(ledAzul, LOW);
+  delay(500);
+}
+
+void alarma(){
+  digitalWrite(ledVerde, LOW);
+  digitalWrite(ledRojo, HIGH);
+  marchaImperial();
+}
+
+// funciones de la marcha imperial
+void marchaImperial()
 {
   primeraSeccion();
 
@@ -216,4 +218,30 @@ void segundaSeccion()
   tono(cH, 250);  
 
   delay(350);
+}
+
+boolean pulsadorPresionado(){
+  return digitalRead(pulsador);
+}
+
+void vaciarTacho(){
+  papeles = 0;
+  digitalWrite(ledRojo, LOW);
+  digitalWrite(ledVerde, HIGH);
+}
+
+boolean muchaLuz(){
+  return analogRead(fotoResistor) < 550;
+}
+
+void darkblueRGB(){
+  digitalWrite(rgbRojo, 0);
+  digitalWrite(rgbVerde, 0);
+  digitalWrite(rgbAzul, 139);
+}
+
+void magentaRGB(){
+  digitalWrite(rgbRojo, 255);
+  digitalWrite(rgbVerde, 0);
+  digitalWrite(rgbAzul, 255);
 }
