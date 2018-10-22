@@ -87,7 +87,7 @@ void loop()
     alarma();
   }
   
-  if(pulsadorPresionado){
+  if(pulsadorPresionado()){
     vaciarTacho();
   }
 
@@ -128,7 +128,6 @@ void alarma(){
   marchaImperial();
 }
 
-// funciones de la marcha imperial
 void marchaImperial()
 {
   primeraSeccion();
