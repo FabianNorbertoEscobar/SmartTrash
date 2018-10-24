@@ -107,7 +107,7 @@ boolean tachoLleno(){
 }
 
 void abrirTacho(){
-  servo.write(0);
+  servo.write(180);
   digitalWrite(ledAzul, HIGH);
   delay(500);
 }
@@ -117,7 +117,7 @@ void tirarPapel(){
 }
 
 void cerrarTacho(){
-  servo.write(180);
+  servo.write(0);
   digitalWrite(ledAzul, LOW);
   delay(500);
 }
