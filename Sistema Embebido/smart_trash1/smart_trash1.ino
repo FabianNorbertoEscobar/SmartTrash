@@ -1,4 +1,5 @@
 #include<Servo.h>
+#include<SoftwareSerial.h>
 
 //pines
 byte ledVerde = 13; // tacho con espacio
@@ -18,9 +19,14 @@ byte piezoBuzzer = 3; // alarma marcha imperial
 byte pulsador = 2; // vaciar tacho
 byte fotoResistor = A0; // luz del ambiente
 
+byte Rx = 0; // Rx Bluetooth
+byte Tx = 1; // Tx Bluetooth
+
 //variables
-Servo servo;
 int papeles = 0;
+Servo servo;
+SoftwareSerial bluetooth(Rx, Tx);
+char comando;
 
 //frecuencias de la marcha imperial
 const float c = 261.63; // Do (Octava 0)
@@ -65,6 +71,7 @@ void setup()
   Serial.begin(9600);
   servo.write(0);
   digitalWrite(ledVerde, HIGH);
+  bluetooth.begin(38400);
 
   //calibrar pir
   for(int i = 0; i > 30; i++)
@@ -96,6 +103,8 @@ void loop()
   }else{
     magentaRGB();
   }
+
+  recibirComandoBT();
 }
 
 boolean detectaProximidad(){
@@ -125,7 +134,14 @@ void cerrarTacho(){
 void alarma(){
   digitalWrite(ledVerde, LOW);
   digitalWrite(ledRojo, HIGH);
-  marchaImperial();
+  tone(piezoBuzzer, 440, 300);
+  delay(50);
+  noTone(piezoBuzzer);
+  delay(50);
+  tone(piezoBuzzer, 440, 300);
+  delay(50);
+  noTone(piezoBuzzer);
+  delay(50);
 }
 
 void marchaImperial()
@@ -243,4 +259,42 @@ void magentaRGB(){
   digitalWrite(rgbRojo, 255);
   digitalWrite(rgbVerde, 0);
   digitalWrite(rgbAzul, 255);
+}
+
+void darkvioletRGB(){
+  digitalWrite(rgbRojo, 148);
+  digitalWrite(rgbVerde, 0);
+  digitalWrite(rgbAzul, 211);
+}
+
+void recibirComandoBT(){
+  if(bluetooth.available() > 0){
+    comando = bluetooth.read();
+    switch(comando){
+      case 'a':
+        abrirTacho();
+        break;
+      case 'b':
+        cerrarTacho();
+        break;
+      case 'v':
+        vaciarTacho();
+        break;
+      case 'j':
+        modoJuego();
+        break;
+    }
+  }
+}
+
+void modoJuego(){
+  darkvioletRGB();
+  marchaImperial();
+  magentaRGB();
+  servoLoco();
+}
+
+void servoLoco(){
+  abrirTacho();
+  cerrarTacho();
 }
