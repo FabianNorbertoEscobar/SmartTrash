@@ -27,6 +27,7 @@ int papeles = 0;
 Servo servo;
 SoftwareSerial bluetooth(Rx, Tx);
 char comando;
+bool flagMuchaLuz = false;
 
 //frecuencias de la marcha imperial
 const float c = 261.63; // Do (Octava 0)
@@ -73,6 +74,7 @@ void setup()
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
 
+
   //calibrar pir
   for(int i = 0; i > 30; i++)
   {
@@ -83,65 +85,86 @@ void setup()
 
 void loop()
 { 
+  if(pulsadorPresionado()){
+    vaciarTacho();
+  }
+  
   if(detectaProximidad() && !tachoLleno()){
+    //Ver método TirarPapel
     abrirTacho();
-    tirarPapel();
+    //tirarPapel();
   }else{
     cerrarTacho();
   }
 
   if(tachoLleno()){
+    enviarComandoBT('l');
     alarma();
   }
   
-  if(pulsadorPresionado()){
-    vaciarTacho();
-  }
-
   if(muchaLuz()){
     darkblueRGB();
+    if(!flagMuchaLuz){
+      enviarComandoBT('m');
+      flagMuchaLuz = true;      
+    }
   }else{
     magentaRGB();
+    if(flagMuchaLuz){
+      enviarComandoBT('p');
+      flagMuchaLuz = false;      
+    }
   }
 
   recibirComandoBT();
 }
 
 boolean detectaProximidad(){
-  return digitalRead(pir1)|| digitalRead(pir2);
+  //return digitalRead(pir1)|| digitalRead(pir2);
+  return digitalRead(pir1);
 }
 
 boolean tachoLleno(){
-  return digitalRead(ir);
+  //return digitalRead(ir);
+  return false;  
 }
 
 void abrirTacho(){
   servo.write(180);
   digitalWrite(ledAzul, HIGH);
-  delay(500);
 }
 
 void tirarPapel(){
-  papeles++;
+  if(digitalRead(ir) == LOW){
+    tachoLleno();
+  }else{
+    papeles++;
+  }
 }
 
 void cerrarTacho(){
   servo.write(0);
   digitalWrite(ledAzul, LOW);
-  delay(500);
 }
 
 void alarma(){
+  cerrarTacho();
   digitalWrite(ledVerde, LOW);
   digitalWrite(ledRojo, HIGH);
-  tone(piezoBuzzer, 440, 300);
-  delay(50);
-  noTone(piezoBuzzer);
-  delay(50);
-  tone(piezoBuzzer, 440, 300);
-  delay(50);
-  noTone(piezoBuzzer);
-  delay(50);
+  Serial.println("alarma");
+  while(!pulsadorPresionado()){
+    Serial.println("pulsador no apretado");
+    tone(piezoBuzzer, 440, 300);
+    delay(50);
+    noTone(piezoBuzzer);
+    delay(50);
+    tone(piezoBuzzer, 440, 300);
+    delay(50);
+    noTone(piezoBuzzer);
+    delay(50);
+  }
+  Serial.println("pulsador apretado");
+  vaciarTacho();
 }
 
 void marchaImperial()
@@ -240,9 +263,18 @@ boolean pulsadorPresionado(){
 }
 
 void vaciarTacho(){
+  
   papeles = 0;
+  digitalWrite(ledVerde, HIGH);    
+  digitalWrite(ledRojo, HIGH);
+  abrirTacho();
+  while(!pulsadorPresionado()){
+    //Vaciando tachito :D
+    Serial.println("vaciando");
+  }
   digitalWrite(ledRojo, LOW);
-  digitalWrite(ledVerde, HIGH);
+  cerrarTacho();
+  enviarComandoBT('v');
 }
 
 boolean muchaLuz(){
@@ -283,7 +315,16 @@ void recibirComandoBT(){
       case 'j':
         modoJuego();
         break;
+      case 'e':
+        efectoRGB();
+        break;
     }
+  }
+}
+
+void enviarComandoBT(char comando){
+  if(bluetooth.available() > 0){
+    bluetooth.write(comando);
   }
 }
 
@@ -296,5 +337,7 @@ void modoJuego(){
 
 void servoLoco(){
   abrirTacho();
+  delay(600);
   cerrarTacho();
+  delay(600);
 }
