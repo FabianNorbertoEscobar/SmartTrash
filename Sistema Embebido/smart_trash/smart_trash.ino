@@ -23,7 +23,6 @@ byte Rx = 0; // Rx Bluetooth
 byte Tx = 1; // Tx Bluetooth
 
 //variables
-int papeles = 0;
 Servo servo;
 SoftwareSerial bluetooth(Rx, Tx);
 char comando;
@@ -74,7 +73,6 @@ void setup()
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
 
-
   //calibrar pir
   for(int i = 0; i > 30; i++)
   {
@@ -90,9 +88,7 @@ void loop()
   }
   
   if(detectaProximidad() && !tachoLleno()){
-    //Ver método TirarPapel
     abrirTacho();
-    //tirarPapel();
   }else{
     cerrarTacho();
   }
@@ -113,7 +109,6 @@ void loop()
     if(flagMuchaLuz){
       enviarComandoBT('p');
       flagMuchaLuz = false;      
-  
     }
   }
 
@@ -121,27 +116,17 @@ void loop()
 }
 
 boolean detectaProximidad(){
-  //return digitalRead(pir1)|| digitalRead(pir2);
-  return digitalRead(pir1);
+  return digitalRead(pir1)|| digitalRead(pir2);
 }
 
 boolean tachoLleno(){
-  //return digitalRead(ir);
-  return false;  
+  return digitalRead(ir);
 }
 
 void abrirTacho(){
   servo.write(90);
   digitalWrite(ledAzul, HIGH);
   delay(600);
-}
-
-void tirarPapel(){
-  if(digitalRead(ir) == LOW){
-    tachoLleno();
-  }else{
-    papeles++;
-  }
 }
 
 void cerrarTacho(){
@@ -266,13 +251,10 @@ boolean pulsadorPresionado(){
 }
 
 void vaciarTacho(){
-  
-  papeles = 0;
   digitalWrite(ledVerde, HIGH);    
   digitalWrite(ledRojo, HIGH);
   abrirTacho();
   while(!pulsadorPresionado()){
-    //Vaciando tachito :D
     Serial.println("vaciando");
   }
   digitalWrite(ledRojo, LOW);
@@ -315,11 +297,11 @@ void recibirComandoBT(){
       case 'v':
         vaciarTacho();
         break;
-      case 'j':
+      case 'm':
         modoJuego();
         break;
-      case 'e':
-        //efectoRGB();
+      case 's':
+        servoLoco;
         break;
     }
   }
@@ -335,7 +317,6 @@ void modoJuego(){
   darkvioletRGB();
   marchaImperial();
   magentaRGB();
-  servoLoco();
 }
 
 void servoLoco(){
