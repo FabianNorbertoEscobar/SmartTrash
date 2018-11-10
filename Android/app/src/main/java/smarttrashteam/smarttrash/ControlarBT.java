@@ -55,7 +55,7 @@ public class ControlarBT extends AppCompatActivity {
 
                     if (endOfLineIndex > 0) {
                         String dataInPrint = DataStringIN.substring(0, endOfLineIndex);
-                        TxtDatos.setText("Dato: " + dataInPrint);//<-<- PARTE A MODIFICAR >->->
+                        TxtDatos.setText("Dato: " + dataInPrint);
                         DataStringIN.delete(0, DataStringIN.length());
                     }
                 }
@@ -108,7 +108,7 @@ public class ControlarBT extends AppCompatActivity {
         //Consigue la direccion MAC desde DeviceListActivity via intent
         Intent intent = getIntent();
         //Consigue la direccion MAC desde DeviceListActivity via EXTRA
-        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS);//<-<- PARTE A MODIFICAR >->->
+        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS);
         //Setea la direccion MAC
         BluetoothDevice device = btAdapter.getRemoteDevice(address);
 

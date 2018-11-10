@@ -113,6 +113,7 @@ void loop()
     if(flagMuchaLuz){
       enviarComandoBT('p');
       flagMuchaLuz = false;      
+  
     }
   }
 
