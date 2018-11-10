@@ -21,11 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/IdTituloControlarTapa"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="78dp"
-        android:layout_marginLeft="78dp"
-        android:layout_marginTop="18dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginRight="14dp"
         android:text="Abrir" />
 
     <TextView
@@ -62,7 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="138dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="58dp"
         android:text="Tacho:"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -71,11 +72,24 @@
         android:id="@+id/IdBtnCerrarTacho"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/IdTituloControlarTapa"
+        android:layout_below="@+id/IdBtnAbrirTacho"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="77dp"
-        android:layout_marginRight="77dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
         android:text="Cerrar" />
+
+    <TextView
+        android:id="@+id/IdTxtLuz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/IdBtnAbrirTacho"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="54dp"
+        android:layout_marginLeft="54dp"
+        android:text="Luz prendida"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 </RelativeLayout>

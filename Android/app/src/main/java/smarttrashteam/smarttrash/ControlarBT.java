@@ -4,6 +4,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +24,7 @@ import java.util.UUID;
 public class ControlarBT extends AppCompatActivity {
 
     Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconctarBT;
-    TextView TxtDatos;
+    TextView TxtDatos, TxtLuz;
 
     //-------------------------------------------
     Handler bluetoothIn;
@@ -28,7 +32,9 @@ public class ControlarBT extends AppCompatActivity {
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
-    private ConnectedThread MyConexionBT;
+    private ConnectedThread MiConeccionBT;
+    private Sensor SensorProximidad;
+    private SensorManager sensorManager;
     // Identificador unico de servicio - SPP UUID
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     // String para la direccion MAC
@@ -44,6 +50,13 @@ public class ControlarBT extends AppCompatActivity {
         BtnCerrarTacho = findViewById(R.id.IdBtnCerrarTacho);
         BtnDesconctarBT = findViewById(R.id.IdBtnDesconectar);
         TxtDatos = findViewById(R.id.IdTxtDatos);
+        TxtLuz = findViewById((R.id.IdTxtLuz));
+
+        //Se usa el SensorManager para el control de los sensores
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        //Se obtiene el sensor de proximidad
+        SensorProximidad = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        VerificarEstadoSensorProximidad();
 
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
@@ -71,13 +84,13 @@ public class ControlarBT extends AppCompatActivity {
         BtnAbrirTacho.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                MyConexionBT.write("a");
+                MiConeccionBT.write("a");
             }
         });
 
         BtnCerrarTacho.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                MyConexionBT.write("c");
+                MiConeccionBT.write("c");
             }
         });
 
@@ -105,6 +118,7 @@ public class ControlarBT extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
+        //-------------BLUETOOTH----
         //Consigue la direccion MAC desde DeviceListActivity via intent
         Intent intent = getIntent();
         //Consigue la direccion MAC desde DeviceListActivity via EXTRA
@@ -127,8 +141,28 @@ public class ControlarBT extends AppCompatActivity {
                 btSocket.close();
             } catch (IOException e2) {}
         }
-        MyConexionBT = new ConnectedThread(btSocket);
-        MyConexionBT.start();
+        MiConeccionBT = new ConnectedThread(btSocket);
+        MiConeccionBT.start();
+        //----------FIN BLUETOOTH------
+
+        //----------SENSORES-----------
+        SensorEventListener sensorProximidadListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent evento) {
+                if(evento.values[0] < SensorProximidad.getMaximumRange()) {
+                    TxtLuz.setText("Tacho prendido");
+                } else {
+                    TxtLuz.setText("Tacho apagado");
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
+            }
+        };
+        sensorManager.registerListener(sensorProximidadListener,
+                SensorProximidad, 2 * 1000 * 1000);
+        //----------FIN SENSORES--------
     }
 
     @Override
@@ -136,10 +170,17 @@ public class ControlarBT extends AppCompatActivity {
     {
         super.onPause();
         try
-        { // Cuando se sale de la aplicación esta parte permite
-            // que no se deje abierto el socket
+        { // Cuando se sale de la aplicación esta parte permite que no quede nada activo
             btSocket.close();
+
         } catch (IOException e2) {}
+    }
+
+
+    private void VerificarEstadoSensorProximidad(){
+        if(SensorProximidad == null) {
+            Toast.makeText(getBaseContext(), "El dispositivo no posee sensor de proximidad", Toast.LENGTH_LONG).show();
+        }
     }
 
     //Comprueba que el dispositivo Bluetooth Bluetooth está disponible y solicita que se active si está desactivado
