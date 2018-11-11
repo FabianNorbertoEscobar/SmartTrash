@@ -34,11 +34,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="179dp"
+        android:layout_marginBottom="87dp"
         android:text="Dato:"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/IdBtnDesconectar"
@@ -60,10 +60,8 @@
         android:id="@+id/IdTituloControlarTapa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="58dp"
+        android:layout_below="@+id/textView2"
+        android:layout_marginTop="17dp"
         android:text="Tacho:"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -106,5 +104,21 @@
         android:text="Abre"
         android:textSize="24sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/IdTxtTachoLoco"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_below="@+id/IdTxtSacudida"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginBottom="213dp"
+        android:text="Juego 'Tacho Loco'"
+        android:textSize="24sp"
+        android:visibility="visible" />
 
 </RelativeLayout>

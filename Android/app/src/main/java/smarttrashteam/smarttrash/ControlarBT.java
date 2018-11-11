@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ControlarBT extends AppCompatActivity {
 
     Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconectarBT;
-    TextView TxtDatos, TxtLuz, TxtSacudida;
+    TextView TxtDatos, TxtLuz, TxtSacudida, TxtTachoLoco;
 
     //-------------------------------------------
     Handler bluetoothIn;
@@ -34,9 +34,9 @@ public class ControlarBT extends AppCompatActivity {
     private StringBuilder DataStringIN = new StringBuilder();
     private ConnectedThread MiConeccionBT;
     private SensorManager sensorManager;
-    private SensorEventListener sensorProximidadListener;
+    private SensorEventListener sensorProximidadListener, sensorGiroscopoListener;
     private DetectorSacudida DetectorSacudida;
-    private Sensor SensorProximidad, SensorAcelerometro;
+    private Sensor SensorProximidad, SensorAcelerometro, SensorGiroscopo;
 
     // Identificador unico de servicio - SPP UUID
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -55,13 +55,15 @@ public class ControlarBT extends AppCompatActivity {
         TxtDatos = findViewById(R.id.IdTxtDatos);
         TxtLuz = findViewById((R.id.IdTxtLuz));
         TxtSacudida = findViewById(R.id.IdTxtSacudida);
+        TxtTachoLoco = findViewById(R.id.IdTxtTachoLoco);
 
         //Se usa el SensorManager para el control de los sensores
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Se obtiene el sensor de proximidad
         SensorProximidad = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         SensorAcelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        VerificarEstadoSensorProximidad();
+        SensorGiroscopo = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        VerificarEstadoSensores();
 
         bluetoothIn = new Handler() {
             public void handleMessage(android.os.Message msg) {
@@ -108,7 +110,7 @@ public class ControlarBT extends AppCompatActivity {
                 finish();
             }
         });
-        //-------------FIN LISTENERS----
+        //-------------FIN LISTENERS----------
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException
@@ -166,8 +168,7 @@ public class ControlarBT extends AppCompatActivity {
             public void onAccuracyChanged(Sensor sensor, int i) {
             }
         };
-        sensorManager.registerListener(sensorProximidadListener,
-                SensorProximidad, 2 * 1000 * 1000);
+        sensorManager.registerListener(sensorProximidadListener, SensorProximidad, 2 * 1000 * 1000);
         //----------FIN---Comportamiento sensor proximidad
 
         //----------Comportamiento sensor aceleración
@@ -186,6 +187,28 @@ public class ControlarBT extends AppCompatActivity {
         sensorManager.registerListener(DetectorSacudida, SensorAcelerometro, SensorManager.SENSOR_DELAY_UI);
         //----------FIN---Comportamiento sensor aceleración
 
+        //----------Comportamiento sensor giróscopo
+        sensorGiroscopoListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
+//                String msg = "0: " + sensorEvent.values[0] + "\n" +
+//                        "1: " + sensorEvent.values[1] + "\n" +
+//                        "2: " + sensorEvent.values[2] + "\n";
+//                TxtTachoLoco.setText(msg);
+                if(sensorEvent.values[2] > 0.5f) { // anticlockwise
+                    TxtTachoLoco.setVisibility(View.VISIBLE);
+                } else if(sensorEvent.values[2] < -0.5f) { // clockwise
+                    TxtTachoLoco.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
+            }
+        };
+        sensorManager.registerListener(sensorGiroscopoListener, SensorGiroscopo, SensorManager.SENSOR_DELAY_GAME);
+        //----------FIN---Comportamiento sensor giróscopo
+
         //----------FIN SENSORES--------
     }
 
@@ -203,9 +226,15 @@ public class ControlarBT extends AppCompatActivity {
     }
 
 
-    private void VerificarEstadoSensorProximidad(){
+    private void VerificarEstadoSensores(){
         if(SensorProximidad == null) {
             Toast.makeText(getBaseContext(), "El dispositivo no posee sensor de proximidad", Toast.LENGTH_LONG).show();
+        }
+        if(SensorGiroscopo == null) {
+            Toast.makeText(getBaseContext(), "El dispositivo no posee giróscopo", Toast.LENGTH_LONG).show();
+        }
+        if(SensorAcelerometro == null) {
+            Toast.makeText(getBaseContext(), "El dispositivo no posee acelerómetro", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".DispositivosBT" />
-        <activity android:name=".ControlarBT"></activity>
+        <activity android:name=".ControlarBT"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
