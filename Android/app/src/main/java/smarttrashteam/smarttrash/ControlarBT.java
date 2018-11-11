@@ -23,8 +23,8 @@ import java.util.UUID;
 
 public class ControlarBT extends AppCompatActivity {
 
-    Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconctarBT;
-    TextView TxtDatos, TxtLuz;
+    Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconectarBT;
+    TextView TxtDatos, TxtLuz, TxtSacudida;
 
     //-------------------------------------------
     Handler bluetoothIn;
@@ -33,8 +33,11 @@ public class ControlarBT extends AppCompatActivity {
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
     private ConnectedThread MiConeccionBT;
-    private Sensor SensorProximidad;
     private SensorManager sensorManager;
+    private SensorEventListener sensorProximidadListener;
+    private DetectorSacudida DetectorSacudida;
+    private Sensor SensorProximidad, SensorAcelerometro;
+
     // Identificador unico de servicio - SPP UUID
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     // String para la direccion MAC
@@ -48,14 +51,16 @@ public class ControlarBT extends AppCompatActivity {
 
         BtnAbrirTacho = findViewById(R.id.IdBtnAbrirTacho);
         BtnCerrarTacho = findViewById(R.id.IdBtnCerrarTacho);
-        BtnDesconctarBT = findViewById(R.id.IdBtnDesconectar);
+        BtnDesconectarBT = findViewById(R.id.IdBtnDesconectar);
         TxtDatos = findViewById(R.id.IdTxtDatos);
         TxtLuz = findViewById((R.id.IdTxtLuz));
+        TxtSacudida = findViewById(R.id.IdTxtSacudida);
 
         //Se usa el SensorManager para el control de los sensores
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         //Se obtiene el sensor de proximidad
         SensorProximidad = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        SensorAcelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         VerificarEstadoSensorProximidad();
 
         bluetoothIn = new Handler() {
@@ -78,9 +83,7 @@ public class ControlarBT extends AppCompatActivity {
         btAdapter = BluetoothAdapter.getDefaultAdapter(); // get Bluetooth adapter
         VerificarEstadoBT();
 
-        // Configuracion onClick listeners para los botones
-        // para indicar que se realizara cuando se detecte
-        // el evento de Click
+        //-----------LISTENERS BOTONES--------
         BtnAbrirTacho.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -94,7 +97,7 @@ public class ControlarBT extends AppCompatActivity {
             }
         });
 
-        BtnDesconctarBT.setOnClickListener(new View.OnClickListener() {
+        BtnDesconectarBT.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (btSocket!=null)
                 {
@@ -105,6 +108,7 @@ public class ControlarBT extends AppCompatActivity {
                 finish();
             }
         });
+        //-------------FIN LISTENERS----
     }
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException
@@ -146,7 +150,9 @@ public class ControlarBT extends AppCompatActivity {
         //----------FIN BLUETOOTH------
 
         //----------SENSORES-----------
-        SensorEventListener sensorProximidadListener = new SensorEventListener() {
+
+        //----------Comportamiento sensor proximidad
+        sensorProximidadListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent evento) {
                 if(evento.values[0] < SensorProximidad.getMaximumRange()) {
@@ -162,6 +168,24 @@ public class ControlarBT extends AppCompatActivity {
         };
         sensorManager.registerListener(sensorProximidadListener,
                 SensorProximidad, 2 * 1000 * 1000);
+        //----------FIN---Comportamiento sensor proximidad
+
+        //----------Comportamiento sensor aceleración
+        DetectorSacudida = new DetectorSacudida();
+        DetectorSacudida.setOnShakeListener(new smarttrashteam.smarttrash.DetectorSacudida.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                if(TxtSacudida.getText().equals("Abre")){
+                    TxtSacudida.setText("Cierra");
+                }else{
+                    TxtSacudida.setText("Abre");
+                }
+            }
+        });
+        sensorManager.registerListener(DetectorSacudida, SensorAcelerometro, SensorManager.SENSOR_DELAY_UI);
+        //----------FIN---Comportamiento sensor aceleración
+
         //----------FIN SENSORES--------
     }
 
@@ -172,6 +196,8 @@ public class ControlarBT extends AppCompatActivity {
         try
         { // Cuando se sale de la aplicación esta parte permite que no quede nada activo
             btSocket.close();
+            sensorManager.unregisterListener(DetectorSacudida);
+            sensorManager.unregisterListener(sensorProximidadListener);
 
         } catch (IOException e2) {}
     }

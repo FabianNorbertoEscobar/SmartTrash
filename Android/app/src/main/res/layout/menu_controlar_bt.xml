@@ -92,4 +92,19 @@
         android:text="Luz prendida"
         android:textSize="24sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/IdTxtSacudida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/IdTxtLuz"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="54dp"
+        android:layout_marginLeft="54dp"
+        android:layout_marginTop="16dp"
+        android:text="Abre"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
 </RelativeLayout>
