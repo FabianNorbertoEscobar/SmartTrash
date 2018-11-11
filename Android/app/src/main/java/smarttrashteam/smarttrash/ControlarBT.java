@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ControlarBT extends AppCompatActivity {
 
     Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconectarBT;
-    TextView TxtDatos, TxtLuz, TxtSacudida, TxtTachoLoco;
+    TextView TxtDatos, TxtLuz, TxtSacudida, TxtTachoLocoAntihorario, TxtTachoLocoHorario;
 
     //-------------------------------------------
     Handler bluetoothIn;
@@ -55,7 +55,8 @@ public class ControlarBT extends AppCompatActivity {
         TxtDatos = findViewById(R.id.IdTxtDatos);
         TxtLuz = findViewById((R.id.IdTxtLuz));
         TxtSacudida = findViewById(R.id.IdTxtSacudida);
-        TxtTachoLoco = findViewById(R.id.IdTxtTachoLoco);
+        TxtTachoLocoAntihorario = findViewById(R.id.IdTxtTachoLocoAntihorario);
+        TxtTachoLocoHorario = findViewById(R.id.IdTxtTachoLocoHorario);
 
         //Se usa el SensorManager para el control de los sensores
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -191,14 +192,12 @@ public class ControlarBT extends AppCompatActivity {
         sensorGiroscopoListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-//                String msg = "0: " + sensorEvent.values[0] + "\n" +
-//                        "1: " + sensorEvent.values[1] + "\n" +
-//                        "2: " + sensorEvent.values[2] + "\n";
-//                TxtTachoLoco.setText(msg);
-                if(sensorEvent.values[2] > 0.5f) { // anticlockwise
-                    TxtTachoLoco.setVisibility(View.VISIBLE);
-                } else if(sensorEvent.values[2] < -0.5f) { // clockwise
-                    TxtTachoLoco.setVisibility(View.INVISIBLE);
+                if(sensorEvent.values[2] > 6f) { // Giro antihorario
+                    TxtTachoLocoAntihorario.setVisibility(View.VISIBLE);
+                    TxtTachoLocoHorario.setVisibility(View.INVISIBLE);
+                } else if(sensorEvent.values[2] < -6f) { // Giro Horario
+                    TxtTachoLocoAntihorario.setVisibility(View.INVISIBLE);
+                    TxtTachoLocoHorario.setVisibility(View.VISIBLE);
                 }
             }
 
