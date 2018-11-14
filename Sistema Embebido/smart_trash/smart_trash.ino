@@ -27,6 +27,7 @@ Servo servo;
 SoftwareSerial bluetooth(Rx, Tx);
 char comando;
 bool flagMuchaLuz = false;
+int consultaTachoLleno = 0;
 
 //frecuencias de la marcha imperial
 const float c = 261.63; // Do (Octava 0)
@@ -69,7 +70,7 @@ void setup()
 
   //inicializar componentes
   Serial.begin(9600);
-  servo.write(180);
+  servo.write(90);
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
 
@@ -86,17 +87,21 @@ void loop()
   if(pulsadorPresionado()){
     vaciarTacho();
   }
-  
-  if(detectaProximidad() && !tachoLleno()){
-    abrirTacho();
-  }else{
-    cerrarTacho();
-  }
 
-  if(tachoLleno()){
+  //if(!tachoLleno())
+  //{
+    if(detectaProximidad()){
+      abrirTacho();
+    }
+    else
+    {
+      cerrarTacho();
+    }
+  //}
+  /*if(tachoLleno()){
     enviarComandoBT('l');
     alarma();
-  }
+  }*/
   
   if(muchaLuz()){
     darkblueRGB();
@@ -116,11 +121,29 @@ void loop()
 }
 
 boolean detectaProximidad(){
-  return digitalRead(pir1)|| digitalRead(pir2);
+  if(digitalRead(pir1) == HIGH)
+    return true;
+  else if(digitalRead(pir2)== HIGH)
+    return true;
+  else
+    return false;
 }
 
 boolean tachoLleno(){
-  return digitalRead(ir);
+  if(digitalRead(ir) == LOW)
+  {
+    consultaTachoLleno++;
+  }
+  else
+  {
+    consultaTachoLleno = 0;
+  }
+
+  /*Si en las ultimas 5 consultas, el sensor devuelve HIGH considero que esta lleno.*/
+  if(consultaTachoLleno >= 5)
+    return true;
+  else
+    return false;
 }
 
 void abrirTacho(){
@@ -139,9 +162,7 @@ void alarma(){
   cerrarTacho();
   digitalWrite(ledVerde, LOW);
   digitalWrite(ledRojo, HIGH);
-  Serial.println("alarma");
   while(!pulsadorPresionado()){
-    Serial.println("pulsador no apretado");
     tone(piezoBuzzer, 440, 300);
     delay(50);
     noTone(piezoBuzzer);
@@ -151,7 +172,6 @@ void alarma(){
     noTone(piezoBuzzer);
     delay(50);
   }
-  Serial.println("pulsador apretado");
   vaciarTacho();
 }
 
@@ -301,7 +321,7 @@ void recibirComandoBT(){
         modoJuego();
         break;
       case 's':
-        servoLoco;
+        servoLoco();
         break;
     }
   }
