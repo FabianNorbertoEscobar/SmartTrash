@@ -2,4 +2,5 @@
     <string name="app_name">SmartTrash</string>
     <string name="tituloApp">Smart Trash</string>
     <string name="titulobtnAjustes">Ajustes</string>
+    <string name="title_activity_giroscopo">Giroscopo</string>
 </resources>
