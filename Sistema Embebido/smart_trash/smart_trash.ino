@@ -301,7 +301,7 @@ void recibirComandoBT(){
         modoJuego();
         break;
       case 's':
-        servoLoco;
+        servoLoco();
         break;
     }
   }
