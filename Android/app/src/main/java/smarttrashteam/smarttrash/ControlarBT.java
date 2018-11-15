@@ -29,6 +29,7 @@ public class ControlarBT extends AppCompatActivity {
     //-------------------------------------------
     Handler bluetoothIn;
     final int handlerState = 0;
+    private boolean TapaAbierta;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
@@ -90,13 +91,13 @@ public class ControlarBT extends AppCompatActivity {
         BtnAbrirTacho.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                MiConeccionBT.write("a");
+                MiConeccionBT.write("b");
             }
         });
 
         BtnCerrarTacho.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                MiConeccionBT.write("c");
+                MiConeccionBT.write("s");
             }
         });
 
@@ -178,11 +179,19 @@ public class ControlarBT extends AppCompatActivity {
 
             @Override
             public void onShake(int count) {
-                if(TxtSacudida.getText().equals("Abre")){
-                    TxtSacudida.setText("Cierra");
+//                if(TxtSacudida.getText().equals("Abre")){
+//                    TxtSacudida.setText("Cierra");
+//                }else{
+//                    TxtSacudida.setText("Abre");
+//                }
+                if(TapaAbierta == false){
+                    MiConeccionBT.write("a");
+                    TapaAbierta = true;
                 }else{
-                    TxtSacudida.setText("Abre");
+                    MiConeccionBT.write("c");
+                    TapaAbierta = false;
                 }
+
             }
         });
         sensorManager.registerListener(DetectorSacudida, SensorAcelerometro, SensorManager.SENSOR_DELAY_UI);

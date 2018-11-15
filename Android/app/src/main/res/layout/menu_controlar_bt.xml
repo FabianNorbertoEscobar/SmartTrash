@@ -28,9 +28,8 @@
         android:layout_marginStart="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginBottom="25dp"
-        android:enabled="false"
-        android:text="Abrir"
-        android:visibility="invisible" />
+        android:text="ON"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/IdTxtDatos"
@@ -70,9 +69,7 @@
         android:layout_marginEnd="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="25dp"
-        android:enabled="false"
-        android:text="Cerrar"
-        android:visibility="invisible" />
+        android:text="OFF" />
 
     <TextView
         android:id="@+id/IdTxtLuz"
