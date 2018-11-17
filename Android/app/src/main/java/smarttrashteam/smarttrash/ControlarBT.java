@@ -27,11 +27,7 @@ public class ControlarBT extends AppCompatActivity {
     TextView TxtDatos, TxtLuz, TxtSacudida, TxtTachoLocoAntihorario, TxtTachoLocoHorario;
 
     //-------------------------------------------
-    Handler bluetoothIn;
-    final int handlerState = 0;
     private boolean TapaAbierta;
-    private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
     private ConnectedThread MiConeccionBT;
     private SensorManager sensorManager;
@@ -39,6 +35,11 @@ public class ControlarBT extends AppCompatActivity {
     private DetectorSacudida DetectorSacudida;
     private Sensor SensorProximidad, SensorAcelerometro, SensorGiroscopo;
 
+    //Bluetooth
+    Handler bluetoothIn;
+    private BluetoothAdapter btAdapter = null;
+    private BluetoothSocket btSocket = null;
+    final int handlerState = 0;
     // Identificador unico de servicio - SPP UUID
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     // String para la direccion MAC
@@ -52,7 +53,7 @@ public class ControlarBT extends AppCompatActivity {
 
         BtnAbrirTacho = findViewById(R.id.IdBtnAbrirTacho);
         BtnCerrarTacho = findViewById(R.id.IdBtnCerrarTacho);
-        BtnDesconectarBT = findViewById(R.id.IdBtnDesconectar);
+        BtnDesconectarBT = findViewById(R.id.IdBtnVolverDeAcelerometro);
         TxtDatos = findViewById(R.id.IdTxtDatos);
         TxtLuz = findViewById((R.id.IdTxtLuz));
         TxtSacudida = findViewById(R.id.IdTxtSacudida);

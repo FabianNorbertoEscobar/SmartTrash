@@ -43,7 +43,7 @@
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/IdBtnDesconectar"
+        android:id="@+id/IdBtnVolverDeAcelerometro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -75,7 +75,7 @@
         android:id="@+id/IdTxtLuz"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/IdBtnDesconectar"
+        android:layout_above="@+id/IdBtnVolverDeAcelerometro"
         android:layout_below="@+id/textView2"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
@@ -96,7 +96,7 @@
         android:id="@+id/IdTxtSacudida"
         android:layout_width="wrap_content"
         android:layout_height="93dp"
-        android:layout_above="@+id/IdBtnDesconectar"
+        android:layout_above="@+id/IdBtnVolverDeAcelerometro"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
