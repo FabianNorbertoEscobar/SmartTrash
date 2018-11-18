@@ -27,6 +27,7 @@ public class MenuAcciones extends AppCompatActivity {
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     // String para la direccion MAC
     private static String address = null;
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
     //-----Fin Bluetooth
 
     Button BtnActivarSonido, BtnManejarTapa, BtnVaciarTacho, BtnDesconectar;
@@ -35,6 +36,10 @@ public class MenuAcciones extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_acciones);
+
+        Intent intent = getIntent();
+//        //Consigue la direccion MAC desde DeviceListActivity via EXTRA
+        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS);
 
         BtnActivarSonido = findViewById(R.id.IdBtnActivarSonido);
         BtnManejarTapa = findViewById(R.id.IdBtnManejarTapa);
@@ -45,7 +50,8 @@ public class MenuAcciones extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent pantallaActivarSonido = new Intent(getApplicationContext(), ActivarSonido.class);
-                pantallaActivarSonido.putExtra("ConexionBluetooth", MiConexionBT);
+                //pantallaActivarSonido.putExtra("ConexionBluetooth", MiConexionBT);
+                pantallaActivarSonido.putExtra(EXTRA_DEVICE_ADDRESS, address);
                 startActivity(pantallaActivarSonido);
             }
         });
@@ -105,31 +111,31 @@ public class MenuAcciones extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        //-------------BLUETOOTH----
-        //Consigue la direccion MAC desde DeviceListActivity via intent
-        Intent intent = getIntent();
-        //Consigue la direccion MAC desde DeviceListActivity via EXTRA
-        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS);
-        //Setea la direccion MAC
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
-        try
-        {
-            btSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
-            Toast.makeText(getBaseContext(), "La creacción del Socket fallo", Toast.LENGTH_LONG).show();
-        }
-        // Establece la conexión con el socket Bluetooth.
-        try
-        {
-            btSocket.connect();
-        } catch (IOException e) {
-            try {
-                btSocket.close();
-            } catch (IOException e2) {}
-        }
-        MiConexionBT = new ConnectedThread(btSocket);
-        MiConexionBT.start();
+//        //-------------BLUETOOTH----
+//        //Consigue la direccion MAC desde DeviceListActivity via intent
+//        Intent intent = getIntent();
+//        //Consigue la direccion MAC desde DeviceListActivity via EXTRA
+//        address = intent.getStringExtra(DispositivosBT.EXTRA_DEVICE_ADDRESS);
+//        //Setea la direccion MAC
+//        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+//
+//        try
+//        {
+//            btSocket = createBluetoothSocket(device);
+//        } catch (IOException e) {
+//            Toast.makeText(getBaseContext(), "La creacción del Socket fallo", Toast.LENGTH_LONG).show();
+//        }
+//        // Establece la conexión con el socket Bluetooth.
+//        try
+//        {
+//            btSocket.connect();
+//        } catch (IOException e) {
+//            try {
+//                btSocket.close();
+//            } catch (IOException e2) {}
+//        }
+//        MiConexionBT = new ConnectedThread(btSocket);
+//        MiConexionBT.start();
         //----------FIN BLUETOOTH------
     }
 
