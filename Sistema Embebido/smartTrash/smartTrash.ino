@@ -28,6 +28,7 @@ SoftwareSerial bluetooth(Rx, Tx);
 char comando = 's';
 bool flagMuchaLuz = false;
 int consultaTachoLleno = 0;
+unsigned long milisAct;
 
 //frecuencias de la marcha imperial
 const float c = 261.63; // Do (Octava 0)
@@ -70,16 +71,22 @@ void setup()
 
   //inicializar componentes
   Serial.begin(9600);
-  servo.write(180);
+  //servo.write(180);
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
-
+  
+  magentaRGB(); //Inicio el rgb en magenta
+  
   //calibrar pir
   for(int i = 0; i > 30; i++)
   {
     delay(1000);
   }
   delay(50);
+  milisAct = 0;
+  tone(piezoBuzzer, 440, 300);
+  noTone(piezoBuzzer);
+  tone(piezoBuzzer, 300, 440);
 }
 
 void loop()
@@ -94,10 +101,10 @@ void loop()
     }
   }    
   digitalWrite(ledAzul, LOW);
-  modoAuto();
+  modoSensores();
 }
 
-void modoAuto(){
+void modoSensores(){
   if(pulsadorPresionado()){
      vaciarTacho();
   }
@@ -111,14 +118,13 @@ void modoAuto(){
       cerrarTacho();
     }
   }
- /* if(tachoLleno()){
+  else{
     enviarComandoBT('l');
     alarma();
-  }*/
+  }
   if(muchaLuz()){
     darkblueRGB();
     if(!flagMuchaLuz){
-      enviarComandoBT('m');
       flagMuchaLuz = true;      
     }
   }else{
@@ -131,40 +137,40 @@ void modoAuto(){
 }
 
 boolean detectaProximidad(){
-  if(digitalRead(pir1) == HIGH)
-    return true;
-  //else if(digitalRead(pir2)== HIGH)
-    //return true;
-  else
-    return false;
+  return digitalRead(pir1) == HIGH || digitalRead(pir2)== HIGH;
 }
 
-boolean tachoLleno(){
-  if(digitalRead(ir) == LOW)
-  {
-    consultaTachoLleno++;
-  }
-  else
+boolean tachoLleno(){  
+  if(digitalRead(ir) == HIGH)
   {
     consultaTachoLleno = 0;
+    return false;
+  }
+  else{
+    consultaTachoLleno++;
+  }
+  
+  if(consultaTachoLleno == 1)
+  {
+    milisAct = millis();
   }
 
-  /*Si en las ultimas 5 consultas, el sensor devuelve HIGH considero que esta lleno.*/
-  if(consultaTachoLleno >= 5)
+  if(millis() - milisAct >= 5000)
+  {
     return true;
-  else
+  }
+  else{
     return false;
+  }
 }
 
 void abrirTacho(){
   servo.write(90);
-  //digitalWrite(ledAzul, HIGH);
   delay(600);
 }
 
 void cerrarTacho(){
   servo.write(180);
-  //digitalWrite(ledAzul, LOW);
   delay(600);
 }
 
@@ -174,17 +180,93 @@ void alarma(){
   digitalWrite(ledRojo, HIGH);
   while(!pulsadorPresionado()){
     tone(piezoBuzzer, 440, 300);
-    delay(50);
     noTone(piezoBuzzer);
-    delay(50);
-    tone(piezoBuzzer, 440, 300);
-    delay(50);
-    noTone(piezoBuzzer);
-    delay(50);
+    tone(piezoBuzzer, 300, 440);
   }
   vaciarTacho();
 }
 
+boolean pulsadorPresionado(){
+  return digitalRead(pulsador);
+}
+
+void vaciarTacho(){
+  digitalWrite(ledVerde, HIGH);    
+  digitalWrite(ledRojo, HIGH);
+  abrirTacho();
+  while(!pulsadorPresionado()){
+    Serial.println("vaciando");
+  }
+  digitalWrite(ledRojo, LOW);
+  cerrarTacho();
+  enviarComandoBT('v');
+}
+
+boolean muchaLuz(){
+  return analogRead(fotoResistor) < 550;
+}
+
+void darkblueRGB(){
+  digitalWrite(rgbRojo, 0);
+  digitalWrite(rgbVerde, 0);
+  digitalWrite(rgbAzul, 139);
+}
+
+void magentaRGB(){
+  digitalWrite(rgbRojo, 255);
+  digitalWrite(rgbVerde, 0);
+  digitalWrite(rgbAzul, 255);
+}
+
+void darkvioletRGB(){
+  digitalWrite(rgbRojo, 148);
+  digitalWrite(rgbVerde, 0);
+  digitalWrite(rgbAzul, 211);
+}
+
+void recibirComandoBT(){
+  if(bluetooth.available() > 0){
+    comando = bluetooth.read();
+    switch(comando){
+      case 'a':
+        abrirTacho();
+        break;
+      case 'c':
+        cerrarTacho();
+        break;
+      case 'v':
+        vaciarTacho();
+        break;
+      case 'j':
+        modoJuego();
+        break;
+      case 's':
+        servoLoco();
+        break;
+    }
+  }
+}
+
+void enviarComandoBT(char comando){
+  if(bluetooth.available() > 0){
+    bluetooth.write(comando);
+  }
+}
+
+void modoJuego(){
+  darkvioletRGB();
+  marchaImperial();
+  magentaRGB();
+}
+
+void servoLoco(){
+  abrirTacho();
+  delay(600);
+  cerrarTacho();
+  delay(600);
+}
+
+//MARCHA IMPERIAL------------------------------------
 void marchaImperial()
 {
   primeraSeccion();
@@ -275,85 +357,4 @@ void segundaSeccion()
 
   delay(350);
 }
-
-boolean pulsadorPresionado(){
-  return digitalRead(pulsador);
-}
-
-void vaciarTacho(){
-  digitalWrite(ledVerde, HIGH);    
-  digitalWrite(ledRojo, HIGH);
-  abrirTacho();
-  while(!pulsadorPresionado()){
-    Serial.println("vaciando");
-  }
-  digitalWrite(ledRojo, LOW);
-  cerrarTacho();
-  enviarComandoBT('v');
-}
-
-boolean muchaLuz(){
-  return analogRead(fotoResistor) < 550;
-}
-
-void darkblueRGB(){
-  digitalWrite(rgbRojo, 0);
-  digitalWrite(rgbVerde, 0);
-  digitalWrite(rgbAzul, 139);
-}
-
-void magentaRGB(){
-  digitalWrite(rgbRojo, 255);
-  digitalWrite(rgbVerde, 0);
-  digitalWrite(rgbAzul, 255);
-}
-
-void darkvioletRGB(){
-  digitalWrite(rgbRojo, 148);
-  digitalWrite(rgbVerde, 0);
-  digitalWrite(rgbAzul, 211);
-}
-
-void recibirComandoBT(){
-  if(bluetooth.available() > 0){
-    comando = bluetooth.read();
-    switch(comando){
-      case 'a':
-        abrirTacho();
-        //digitalWrite(ledRojo, LOW);
-        break;
-      case 'c':
-        cerrarTacho();
-        //digitalWrite(ledRojo, HIGH);
-        break;
-      case 'v':
-        vaciarTacho();
-        break;
-      case 'm':
-        modoJuego();
-        break;
-      case 's':
-        servoLoco();
-        break;
-    }
-  }
-}
-
-void enviarComandoBT(char comando){
-  if(bluetooth.available() > 0){
-    bluetooth.write(comando);
-  }
-}
-
-void modoJuego(){
-  darkvioletRGB();
-  marchaImperial();
-  magentaRGB();
-}
-
-void servoLoco(){
-  abrirTacho();
-  delay(600);
-  cerrarTacho();
-  delay(600);
-}
+//FIN MARCHA IMPERIAL
