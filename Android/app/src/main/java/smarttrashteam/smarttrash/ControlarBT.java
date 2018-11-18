@@ -30,6 +30,7 @@ public class ControlarBT extends AppCompatActivity {
     Handler bluetoothIn;
     final int handlerState = 0;
     private boolean TapaAbierta;
+    private boolean TachoPrendido;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
@@ -49,7 +50,8 @@ public class ControlarBT extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_controlar_bt);
-
+        TapaAbierta = false;
+        TachoPrendido = false;
         BtnAbrirTacho = findViewById(R.id.IdBtnAbrirTacho);
         BtnCerrarTacho = findViewById(R.id.IdBtnCerrarTacho);
         BtnDesconectarBT = findViewById(R.id.IdBtnDesconectar);
@@ -160,9 +162,11 @@ public class ControlarBT extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent evento) {
                 if(evento.values[0] < SensorProximidad.getMaximumRange()) {
-                    TxtLuz.setText("Tacho prendido");
+                    //TxtLuz.setText("Tacho prendido");
+                    if(!TachoPrendido)
+                    MiConeccionBT.write("l");
                 } else {
-                    TxtLuz.setText("Tacho apagado");
+                    //TxtLuz.setText("Tacho apagado");
                 }
             }
 
@@ -179,11 +183,6 @@ public class ControlarBT extends AppCompatActivity {
 
             @Override
             public void onShake(int count) {
-//                if(TxtSacudida.getText().equals("Abre")){
-//                    TxtSacudida.setText("Cierra");
-//                }else{
-//                    TxtSacudida.setText("Abre");
-//                }
                 if(TapaAbierta == false){
                     MiConeccionBT.write("a");
                     TapaAbierta = true;

@@ -224,6 +224,12 @@ void darkvioletRGB(){
   digitalWrite(rgbAzul, 211);
 }
 
+void amarilloRGB(){
+  digitalWrite(rgbRojo, 255);
+  digitalWrite(rgbVerde, 255);
+  digitalWrite(rgbAzul, 0);
+}
+
 void recibirComandoBT(){
   if(bluetooth.available() > 0){
     comando = bluetooth.read();
@@ -238,10 +244,16 @@ void recibirComandoBT(){
         vaciarTacho();
         break;
       case 'j':
-        modoJuego();
+        tachoLoco();
         break;
-      case 's':
-        servoLoco();
+      case 'm':
+        modoMarcha();
+        break;
+      case 'l':
+        amarilloRGB();
+        break;
+      case 'n':
+        magentaRGB();
         break;
     }
   }
@@ -253,13 +265,13 @@ void enviarComandoBT(char comando){
   }
 }
 
-void modoJuego(){
+void modoMarcha(){
   darkvioletRGB();
   marchaImperial();
   magentaRGB();
 }
 
-void servoLoco(){
+void tachoLoco(){
   abrirTacho();
   delay(600);
   cerrarTacho();
