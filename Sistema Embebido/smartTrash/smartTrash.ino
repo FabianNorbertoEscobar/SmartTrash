@@ -50,8 +50,7 @@ const float gH = 783.99;  // Sol (Octava 1)
 const float gSH = 830.61; // Sol# (Octava 1)
 const float aH = 880.00; // La (Octava 1)
 
-void setup()
-{
+void setup(){
   //modo de los pines
   pinMode(ledVerde, OUTPUT);
   pinMode(ledAzul, OUTPUT);
@@ -75,11 +74,11 @@ void setup()
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
   
-  magentaRGB(); //Inicio el rgb en magenta
+  //Inicio el rgb en magenta
+  magentaRGB();
   
   //calibrar pir
-  for(int i = 0; i > 30; i++)
-  {
+  for(int i = 0; i > 30; i++){
     delay(1000);
   }
   delay(50);
@@ -89,8 +88,7 @@ void setup()
   tone(piezoBuzzer, 300, 440);
 }
 
-void loop()
-{
+void loop(){
   if(bluetooth.available() > 0){
     comando = bluetooth.read();
     if(comando == 'b'){
@@ -141,8 +139,7 @@ boolean detectaProximidad(){
 }
 
 boolean tachoLleno(){  
-  if(digitalRead(ir) == HIGH)
-  {
+  if(digitalRead(ir) == HIGH){
     consultaTachoLleno = 0;
     return false;
   }
@@ -150,13 +147,11 @@ boolean tachoLleno(){
     consultaTachoLleno++;
   }
   
-  if(consultaTachoLleno == 1)
-  {
+  if(consultaTachoLleno == 1){
     milisAct = millis();
   }
 
-  if(millis() - milisAct >= 5000)
-  {
+  if(millis() - milisAct >= 5000){
     return true;
   }
   else{
@@ -279,8 +274,7 @@ void tachoLoco(){
 }
 
 //MARCHA IMPERIAL------------------------------------
-void marchaImperial()
-{
+void marchaImperial(){
   primeraSeccion();
 
   segundaSeccion();
@@ -310,16 +304,14 @@ void marchaImperial()
   delay(650);
 }
 
-void tono(int frecuencia, int duracion)
-{
+void tono(int frecuencia, int duracion){
   tone(piezoBuzzer, frecuencia, duracion);
   delay(duracion);
   noTone(piezoBuzzer);
   delay(50);
 }
 
-void primeraSeccion()
-{
+void primeraSeccion(){
   tono(a, 500);
   tono(a, 500);    
   tono(a, 500);
@@ -345,8 +337,7 @@ void primeraSeccion()
   delay(500);
 }
 
-void segundaSeccion()
-{
+void segundaSeccion(){
   tono(aH, 500);
   tono(a, 300);
   tono(a, 150);
