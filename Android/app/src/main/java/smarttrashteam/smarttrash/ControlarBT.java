@@ -24,13 +24,13 @@ import java.util.UUID;
 public class ControlarBT extends AppCompatActivity {
 
     Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconectarBT;
-    TextView TxtDatos, TxtLuz, TxtSacudida, TxtTachoLocoAntihorario, TxtTachoLocoHorario;
+
+    TextView TxtTachoLleno, TxtSacudida, TxtTachoLocoAntihorario, TxtTachoLocoHorario;
 
     //-------------------------------------------
     Handler bluetoothIn;
     final int handlerState = 0;
     private boolean TapaAbierta;
-    private boolean TachoPrendido;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
@@ -51,15 +51,9 @@ public class ControlarBT extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_controlar_bt);
         TapaAbierta = false;
-        TachoPrendido = false;
-        BtnAbrirTacho = findViewById(R.id.IdBtnAbrirTacho);
-        BtnCerrarTacho = findViewById(R.id.IdBtnCerrarTacho);
         BtnDesconectarBT = findViewById(R.id.IdBtnDesconectar);
-        TxtDatos = findViewById(R.id.IdTxtDatos);
-        TxtLuz = findViewById((R.id.IdTxtLuz));
-        TxtSacudida = findViewById(R.id.IdTxtSacudida);
-        TxtTachoLocoAntihorario = findViewById(R.id.IdTxtTachoLocoAntihorario);
-        TxtTachoLocoHorario = findViewById(R.id.IdTxtTachoLocoHorario);
+        TxtTachoLleno = findViewById((R.id.IdTxtTachoLleno));
+
 
         //Se usa el SensorManager para el control de los sensores
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -79,7 +73,17 @@ public class ControlarBT extends AppCompatActivity {
 
                     if (endOfLineIndex > 0) {
                         String dataInPrint = DataStringIN.substring(0, endOfLineIndex);
-                        TxtDatos.setText("Dato: " + dataInPrint);
+
+                        //TxtDatos.setText("Dato: " + dataInPrint);
+
+                        if(dataInPrint.equals("v")){
+                            TxtTachoLleno.setVisibility(View.INVISIBLE);
+                        }
+
+                        if(dataInPrint.equals("l")){
+                            TxtTachoLleno.setVisibility(View.VISIBLE);
+                        }
+
                         DataStringIN.delete(0, DataStringIN.length());
                     }
                 }
@@ -90,24 +94,17 @@ public class ControlarBT extends AppCompatActivity {
         VerificarEstadoBT();
 
         //-----------LISTENERS BOTONES--------
-        BtnAbrirTacho.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                MiConeccionBT.write("b");
-            }
-        });
-
-        BtnCerrarTacho.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                MiConeccionBT.write("s");
-            }
-        });
 
         BtnDesconectarBT.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (btSocket!=null)
                 {
-                    try {btSocket.close();}
+
+                    try {
+                        MiConeccionBT.write("s");
+                        btSocket.close();
+                    }
+
                     catch (IOException e)
                     { Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();;}
                 }
@@ -153,6 +150,8 @@ public class ControlarBT extends AppCompatActivity {
         }
         MiConeccionBT = new ConnectedThread(btSocket);
         MiConeccionBT.start();
+
+        MiConeccionBT.write("b");
         //----------FIN BLUETOOTH------
 
         //----------SENSORES-----------
@@ -162,11 +161,9 @@ public class ControlarBT extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent evento) {
                 if(evento.values[0] < SensorProximidad.getMaximumRange()) {
-                    //TxtLuz.setText("Tacho prendido");
-                    if(!TachoPrendido)
-                    MiConeccionBT.write("l");
-                } else {
-                    //TxtLuz.setText("Tacho apagado");
+
+                    MiConeccionBT.write("j");
+
                 }
             }
 
@@ -190,7 +187,6 @@ public class ControlarBT extends AppCompatActivity {
                     MiConeccionBT.write("c");
                     TapaAbierta = false;
                 }
-
             }
         });
         sensorManager.registerListener(DetectorSacudida, SensorAcelerometro, SensorManager.SENSOR_DELAY_UI);
@@ -201,11 +197,10 @@ public class ControlarBT extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if(sensorEvent.values[2] > 6f) { // Giro antihorario
-                    TxtTachoLocoAntihorario.setVisibility(View.VISIBLE);
-                    TxtTachoLocoHorario.setVisibility(View.INVISIBLE);
+
+                    MiConeccionBT.write("l");
                 } else if(sensorEvent.values[2] < -6f) { // Giro Horario
-                    TxtTachoLocoAntihorario.setVisibility(View.INVISIBLE);
-                    TxtTachoLocoHorario.setVisibility(View.VISIBLE);
+                    MiConeccionBT.write("n");
                 }
             }
 
@@ -227,6 +222,7 @@ public class ControlarBT extends AppCompatActivity {
         { // Cuando se sale de la aplicación esta parte permite que no quede nada activo
             btSocket.close();
             sensorManager.unregisterListener(DetectorSacudida);
+            sensorManager.unregisterListener(sensorGiroscopoListener);
             sensorManager.unregisterListener(sensorProximidadListener);
 
         } catch (IOException e2) {}

@@ -18,19 +18,6 @@
         android:textSize="30sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/IdBtnAbrirTacho"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/IdTxtDatos"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginBottom="25dp"
-        android:text="ON"
-        android:visibility="visible" />
-
     <TextView
         android:id="@+id/IdTxtDatos"
         android:layout_width="match_parent"
@@ -59,6 +46,10 @@
         android:background="@android:color/darker_gray"
         android:text="Desconectar" />
 
+<<<<<<< HEAD
+    <TextView
+        android:id="@+id/IdTxtTachoLleno"
+=======
     <Button
         android:id="@+id/IdBtnCerrarTacho"
         android:layout_width="wrap_content"
@@ -73,6 +64,7 @@
 
     <TextView
         android:id="@+id/IdTxtLuz"
+>>>>>>> 4d30d138795efb3c37cdde592f8cda5cff90b9be
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/IdBtnDesconectar"
@@ -81,6 +73,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+<<<<<<< HEAD
+        android:layout_marginStart="113dp"
+        android:layout_marginLeft="113dp"
+        android:layout_marginTop="375dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginRight="107dp"
+        android:layout_marginBottom="7dp"
+        android:text="TACHO LLENO"
+=======
         android:layout_marginStart="110dp"
         android:layout_marginLeft="110dp"
         android:layout_marginTop="87dp"
@@ -88,10 +89,36 @@
         android:layout_marginRight="119dp"
         android:layout_marginBottom="296dp"
         android:text="Luz del tacho"
+>>>>>>> 4d30d138795efb3c37cdde592f8cda5cff90b9be
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />
 
+<<<<<<< HEAD
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Button" />
+=======
     <TextView
         android:id="@+id/IdTxtSacudida"
         android:layout_width="wrap_content"
@@ -144,5 +171,6 @@
         android:textAlignment="center"
         android:textSize="14sp"
         android:visibility="visible" />
+>>>>>>> 4d30d138795efb3c37cdde592f8cda5cff90b9be
 
 </RelativeLayout>

@@ -74,9 +74,6 @@ void setup(){
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
   
-  //Inicio el rgb en magenta
-  magentaRGB();
-  
   //calibrar pir
   for(int i = 0; i > 30; i++){
     delay(1000);
@@ -91,14 +88,19 @@ void setup(){
 void loop(){
   if(bluetooth.available() > 0){
     comando = bluetooth.read();
+    
     if(comando == 'b'){
-      while(comando != 's'){
-        digitalWrite(ledAzul, HIGH);
+      digitalWrite(ledAzul, HIGH);
+      while(comando != 's'){        
         recibirComandoBT();
+        bluetooth.flush();
+        if(tachoLleno()){
+          alarma();
+        }
       }
+      digitalWrite(ledAzul, LOW);
     }
   }    
-  digitalWrite(ledAzul, LOW);
   modoSensores();
 }
 
@@ -117,20 +119,23 @@ void modoSensores(){
     }
   }
   else{
-    enviarComandoBT('l');
     alarma();
   }
-  if(muchaLuz()){
-    darkblueRGB();
+  /*if(muchaLuz()){
+    apagarRGB();
     if(!flagMuchaLuz){
       flagMuchaLuz = true;      
     }
   }else{
     magentaRGB();
     if(flagMuchaLuz){
-      enviarComandoBT('p');
       flagMuchaLuz = false;      
     }
+  }*/
+  if(!pocaLuz()){
+    apagarRGB();
+  }else{
+    magentaRGB();
   }
 }
 
@@ -170,6 +175,7 @@ void cerrarTacho(){
 }
 
 void alarma(){
+  enviarComandoBT('l');
   cerrarTacho();
   digitalWrite(ledVerde, LOW);
   digitalWrite(ledRojo, HIGH);
@@ -198,13 +204,19 @@ void vaciarTacho(){
 }
 
 boolean muchaLuz(){
-  return analogRead(fotoResistor) < 550;
+  Serial.println(analogRead(fotoResistor));
+  return analogRead(fotoResistor) > 920 && analogRead(fotoResistor) < 1000;
 }
 
-void darkblueRGB(){
+boolean pocaLuz(){
+  Serial.println(analogRead(fotoResistor));
+  return analogRead(fotoResistor) > 920 && analogRead(fotoResistor) < 1000;
+}
+
+void apagarRGB(){
   digitalWrite(rgbRojo, 0);
   digitalWrite(rgbVerde, 0);
-  digitalWrite(rgbAzul, 139);
+  digitalWrite(rgbAzul, 0);
 }
 
 void magentaRGB(){
@@ -248,7 +260,7 @@ void recibirComandoBT(){
         amarilloRGB();
         break;
       case 'n':
-        magentaRGB();
+        apagarRGB();
         break;
     }
   }
@@ -267,10 +279,12 @@ void modoMarcha(){
 }
 
 void tachoLoco(){
-  abrirTacho();
-  delay(600);
-  cerrarTacho();
-  delay(600);
+  for(int i = 0; i < 5; i++){
+    abrirTacho();
+    delay(600);
+    cerrarTacho();
+    delay(600);
+  }  
 }
 
 //MARCHA IMPERIAL------------------------------------
