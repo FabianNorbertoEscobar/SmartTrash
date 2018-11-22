@@ -23,9 +23,9 @@ import java.util.UUID;
 
 public class ControlarBT extends AppCompatActivity {
 
-    Button BtnAbrirTacho, BtnCerrarTacho, BtnDesconectarBT;
+    Button BtnDesconectarBT;
 
-    TextView TxtTachoLleno, TxtSacudida, TxtTachoLocoAntihorario, TxtTachoLocoHorario;
+    TextView TxtTachoLleno;
 
     //-------------------------------------------
     Handler bluetoothIn;
@@ -161,9 +161,7 @@ public class ControlarBT extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent evento) {
                 if(evento.values[0] < SensorProximidad.getMaximumRange()) {
-
                     MiConeccionBT.write("j");
-
                 }
             }
 

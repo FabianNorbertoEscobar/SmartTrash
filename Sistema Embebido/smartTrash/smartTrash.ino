@@ -121,17 +121,6 @@ void modoSensores(){
   else{
     alarma();
   }
-  /*if(muchaLuz()){
-    apagarRGB();
-    if(!flagMuchaLuz){
-      flagMuchaLuz = true;      
-    }
-  }else{
-    magentaRGB();
-    if(flagMuchaLuz){
-      flagMuchaLuz = false;      
-    }
-  }*/
   if(!pocaLuz()){
     apagarRGB();
   }else{
