@@ -50,8 +50,7 @@ const float gH = 783.99;  // Sol (Octava 1)
 const float gSH = 830.61; // Sol# (Octava 1)
 const float aH = 880.00; // La (Octava 1)
 
-void setup()
-{
+void setup(){
   //modo de los pines
   pinMode(ledVerde, OUTPUT);
   pinMode(ledAzul, OUTPUT);
@@ -75,29 +74,30 @@ void setup()
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
   
-  magentaRGB(); //Inicio el rgb en magenta
-
   //calibrar pir
-  for(int i = 0; i > 30; i++)
-  {
+  for(int i = 0; i > 30; i++){
     delay(1000);
   }
   delay(50);
   milisAct = 0;
 }
 
-void loop()
-{
+void loop(){
   if(bluetooth.available() > 0){
     comando = bluetooth.read();
+    
     if(comando == 'b'){
-      while(comando != 's'){
-        digitalWrite(ledAzul, HIGH);
+      digitalWrite(ledAzul, HIGH);
+      while(comando != 's'){        
         recibirComandoBT();
+        bluetooth.flush();
+        if(tachoLleno()){
+          alarma();
+        }
       }
+      digitalWrite(ledAzul, LOW);
     }
   }    
-  digitalWrite(ledAzul, LOW);
   modoSensores();
 }
 
@@ -116,22 +116,12 @@ void modoSensores(){
     }
   }
   else{
-    Serial.println("Tacho Lleno");
-    //enviarComandoBT('l');
     alarma();
   }
-  if(muchaLuz()){
-    darkblueRGB();
-    if(!flagMuchaLuz){
-      enviarComandoBT('m');
-      flagMuchaLuz = true;      
-    }
+  if(!pocaLuz()){
+    apagarRGB();
   }else{
     magentaRGB();
-    if(flagMuchaLuz){
-      enviarComandoBT('p');
-      flagMuchaLuz = false;      
-    }
   }
 }
 
@@ -143,8 +133,7 @@ boolean detectaProximidad(){
 }
 
 boolean tachoLleno(){  
-  if(digitalRead(ir) == HIGH)
-  {
+  if(digitalRead(ir) == HIGH){
     consultaTachoLleno = 0;
     return false;
   }
@@ -152,13 +141,11 @@ boolean tachoLleno(){
     consultaTachoLleno++;
   }
   
-  if(consultaTachoLleno == 1)
-  {
+  if(consultaTachoLleno == 1){
     milisAct = millis();
   }
 
-  if(millis() - milisAct >= 5000)
-  {
+  if(millis() - milisAct >= 5000){
     return true;
   }
   else{
@@ -186,6 +173,7 @@ void cerrarTacho(){
 }
 
 void alarma(){
+  enviarComandoBT('l');
   cerrarTacho();
   digitalWrite(ledVerde, LOW);
   digitalWrite(ledRojo, HIGH);
@@ -214,13 +202,19 @@ void vaciarTacho(){
 }
 
 boolean muchaLuz(){
-  return analogRead(fotoResistor) < 550;
+  Serial.println(analogRead(fotoResistor));
+  return analogRead(fotoResistor) > 920 && analogRead(fotoResistor) < 1000;
 }
 
-void darkblueRGB(){
+boolean pocaLuz(){
+  Serial.println(analogRead(fotoResistor));
+  return analogRead(fotoResistor) > 920 && analogRead(fotoResistor) < 1000;
+}
+
+void apagarRGB(){
   digitalWrite(rgbRojo, 0);
   digitalWrite(rgbVerde, 0);
-  digitalWrite(rgbAzul, 139);
+  digitalWrite(rgbAzul, 0);
 }
 
 void magentaRGB(){
@@ -254,6 +248,12 @@ void recibirComandoBT(){
       case 's':
         servoLoco();
         break;
+      case 'l':
+        amarilloRGB();
+        break;
+      case 'n':
+        apagarRGB();
+        break;
     }
   }
 }
@@ -270,16 +270,17 @@ void modoJuego(){
   magentaRGB();
 }
 
-void servoLoco(){
-  abrirTacho();
-  delay(600);
-  cerrarTacho();
-  delay(600);
+void tachoLoco(){
+  for(int i = 0; i < 5; i++){
+    abrirTacho();
+    delay(600);
+    cerrarTacho();
+    delay(600);
+  }  
 }
 
 //MARCHA IMPERIAL------------------------------------
-void marchaImperial()
-{
+void marchaImperial(){
   primeraSeccion();
 
   segundaSeccion();
@@ -309,16 +310,14 @@ void marchaImperial()
   delay(650);
 }
 
-void tono(int frecuencia, int duracion)
-{
+void tono(int frecuencia, int duracion){
   tone(piezoBuzzer, frecuencia, duracion);
   delay(duracion);
   noTone(piezoBuzzer);
   delay(50);
 }
 
-void primeraSeccion()
-{
+void primeraSeccion(){
   tono(a, 500);
   tono(a, 500);    
   tono(a, 500);
@@ -344,8 +343,7 @@ void primeraSeccion()
   delay(500);
 }
 
-void segundaSeccion()
-{
+void segundaSeccion(){
   tono(aH, 500);
   tono(a, 300);
   tono(a, 150);
