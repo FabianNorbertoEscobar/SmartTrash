@@ -214,9 +214,9 @@ void darkvioletRGB(){
 }
 
 void amarilloRGB(){
-  digitalWrite(rgbRojo, 0);
-  digitalWrite(rgbVerde, 255);
-  digitalWrite(rgbAzul, 255);
+  digitalWrite(rgbRojo, 255);
+  digitalWrite(rgbVerde, 233);
+  digitalWrite(rgbAzul, 0);
 }
 
 void recibirComandoBT(){
