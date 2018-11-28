@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/holo_orange_dark"
-    tools:context=".Acelerometro">
+    tools:context=".ManejarTapa">
 
     <TextView
         android:id="@+id/IdTxtTituloAcelerometro"
@@ -43,7 +43,7 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/IdBtnDesconectar"
+        android:id="@+id/IdBtnVolverDeAcelerometro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

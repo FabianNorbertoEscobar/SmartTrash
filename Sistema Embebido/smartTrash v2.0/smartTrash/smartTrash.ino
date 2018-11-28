@@ -71,12 +71,12 @@ void setup()
 
   //inicializar componentes
   Serial.begin(9600);
-  servo.write(180);
+  //servo.write(180);
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
   
   magentaRGB(); //Inicio el rgb en magenta
-
+  
   //calibrar pir
   for(int i = 0; i > 30; i++)
   {
@@ -84,6 +84,9 @@ void setup()
   }
   delay(50);
   milisAct = 0;
+  tone(piezoBuzzer, 440, 300);
+  noTone(piezoBuzzer);
+  tone(piezoBuzzer, 300, 440);
 }
 
 void loop()
@@ -116,14 +119,12 @@ void modoSensores(){
     }
   }
   else{
-    Serial.println("Tacho Lleno");
-    //enviarComandoBT('l');
+    enviarComandoBT('l');
     alarma();
   }
   if(muchaLuz()){
     darkblueRGB();
     if(!flagMuchaLuz){
-      enviarComandoBT('m');
       flagMuchaLuz = true;      
     }
   }else{
@@ -136,10 +137,7 @@ void modoSensores(){
 }
 
 boolean detectaProximidad(){
-  if(digitalRead(pir1) == HIGH || digitalRead(pir2)== HIGH)
-    return true;
-  else
-    return false;
+  return digitalRead(pir1) == HIGH || digitalRead(pir2)== HIGH;
 }
 
 boolean tachoLleno(){  
@@ -164,15 +162,6 @@ boolean tachoLleno(){
   else{
     return false;
   }
-  /*
-  if(digitalRead(ir) == LOW && (millis()-milisAct)>=5000)
-  {
-    //milisAct = millis();
-    return true;
-  }else{
-    return false;
-  }
-  */
 }
 
 void abrirTacho(){
