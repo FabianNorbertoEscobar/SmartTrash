@@ -9,14 +9,15 @@
     tools:context=".ControlarBT">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/IdTxtTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="Controlar por BT"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/IdTxtDatos"
@@ -53,16 +54,58 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/IdBtnDesconectar"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/IdTxtTitulo"
         android:layout_marginStart="113dp"
         android:layout_marginLeft="113dp"
-        android:layout_marginTop="153dp"
+        android:layout_marginTop="262dp"
         android:layout_marginEnd="107dp"
         android:layout_marginRight="107dp"
-        android:layout_marginBottom="236dp"
+        android:layout_marginBottom="125dp"
         android:text="TACHO LLENO"
         android:textAlignment="center"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/IdBtnMarcha"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/IdTxtDatos"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/darker_gray"
+        android:text="Marcha imperial" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="345dp"
+        android:layout_height="44dp"
+        android:layout_below="@+id/IdTxtTitulo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="39dp"
+        android:text="Mueva el dispositivo para los costados para encender y apagar la luz"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="158dp"
+        android:text="Agite el celular para adelante y hacia atrás para abri y cerrar la tapa"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="32dp"
+        android:text="De vuelta el celular sobre la mesa para activar el modo juego. ¡A ver quién emboca más papeles en 5 intentos!"
+        android:textAlignment="center" />
 
 </RelativeLayout>

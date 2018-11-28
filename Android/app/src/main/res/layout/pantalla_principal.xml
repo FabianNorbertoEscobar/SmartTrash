@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/IdLayout"
     android:layout_width="match_parent"
@@ -8,22 +9,26 @@
 
     <Button
         android:id="@+id/IdBtnMenuBT"
-        android:layout_width="178dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/IdImgTacho"
+        android:layout_width="172dp"
+        android:layout_height="63dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp"
+        android:layout_marginBottom="43dp"
         android:background="@android:color/darker_gray"
         android:text="Conectar bluetooth" />
 
     <ImageView
-        android:id="@+id/IdImgTacho"
-        android:layout_width="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/IdBtnMenuBT"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:src="@mipmap/tacho_basura"
-        android:visibility="visible"
-        tools:srcCompat="@mipmap/tacho_basura" />
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginBottom="13dp"
+        app:srcCompat="@mipmap/tacho" />
+
 </RelativeLayout>

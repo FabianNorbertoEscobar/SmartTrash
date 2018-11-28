@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class ControlarBT extends AppCompatActivity {
 
-    Button BtnDesconectarBT;
+    Button BtnDesconectarBT, BtnMarchaImperial;
 
     TextView TxtTachoLleno;
 
@@ -34,7 +34,7 @@ public class ControlarBT extends AppCompatActivity {
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
-    private ConnectedThread MiConeccionBT;
+    private ConnectedThread MiConexionBT;
     private SensorManager sensorManager;
     private SensorEventListener sensorProximidadListener, sensorGiroscopoListener;
     private DetectorSacudida DetectorSacudida;
@@ -52,6 +52,7 @@ public class ControlarBT extends AppCompatActivity {
         setContentView(R.layout.menu_controlar_bt);
         TapaAbierta = false;
         BtnDesconectarBT = findViewById(R.id.IdBtnDesconectar);
+        BtnMarchaImperial = findViewById(R.id.IdBtnMarcha);
         TxtTachoLleno = findViewById((R.id.IdTxtTachoLleno));
 
 
@@ -101,14 +102,27 @@ public class ControlarBT extends AppCompatActivity {
                 {
 
                     try {
-                        MiConeccionBT.write("s");
+                        MiConexionBT.write("s");
                         btSocket.close();
                     }
 
                     catch (IOException e)
-                    { Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();;}
+                    { Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();}
                 }
                 finish();
+            }
+        });
+
+        BtnMarchaImperial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    MiConexionBT.write("m");
+                    btSocket.close();
+                }
+
+                catch (IOException e)
+                { Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();}
             }
         });
         //-------------FIN LISTENERS----------
@@ -148,10 +162,10 @@ public class ControlarBT extends AppCompatActivity {
                 btSocket.close();
             } catch (IOException e2) {}
         }
-        MiConeccionBT = new ConnectedThread(btSocket);
-        MiConeccionBT.start();
+        MiConexionBT = new ConnectedThread(btSocket);
+        MiConexionBT.start();
 
-        MiConeccionBT.write("b");
+        MiConexionBT.write("b");
         //----------FIN BLUETOOTH------
 
         //----------SENSORES-----------
@@ -161,7 +175,7 @@ public class ControlarBT extends AppCompatActivity {
             @Override
             public void onSensorChanged(SensorEvent evento) {
                 if(evento.values[0] < SensorProximidad.getMaximumRange()) {
-                    MiConeccionBT.write("j");
+                    MiConexionBT.write("j");
                 }
             }
 
@@ -179,10 +193,10 @@ public class ControlarBT extends AppCompatActivity {
             @Override
             public void onShake(int count) {
                 if(TapaAbierta == false){
-                    MiConeccionBT.write("a");
+                    MiConexionBT.write("a");
                     TapaAbierta = true;
                 }else{
-                    MiConeccionBT.write("c");
+                    MiConexionBT.write("c");
                     TapaAbierta = false;
                 }
             }
@@ -196,9 +210,9 @@ public class ControlarBT extends AppCompatActivity {
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if(sensorEvent.values[2] > 6f) { // Giro antihorario
 
-                    MiConeccionBT.write("l");
+                    MiConexionBT.write("l");
                 } else if(sensorEvent.values[2] < -6f) { // Giro Horario
-                    MiConeccionBT.write("n");
+                    MiConexionBT.write("n");
                 }
             }
 
