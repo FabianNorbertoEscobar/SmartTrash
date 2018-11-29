@@ -54,7 +54,7 @@ public class DispositivosBT extends AppCompatActivity {
         // Adiciona un dispositivos previo emparejado al array
         if (pairedDevices.size() > 0)
         {
-            for (BluetoothDevice d1evice : pairedDevices) { //EN CASO DE ERROR LEER LA ANTERIOR EXPLICACION
+            for (BluetoothDevice device : pairedDevices) { //EN CASO DE ERROR LEER LA ANTERIOR EXPLICACION
                 BTArrayDispositivosVinculados.add(device.getName() + "\n" + device.getAddress());
             }
         }
