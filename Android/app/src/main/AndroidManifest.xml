@@ -33,10 +33,6 @@
         <activity
             android:name=".ControlarBT"
             android:screenOrientation="portrait" />
-        <activity android:name=".Giroscopo" />
-        <activity android:name=".MenuAcciones" />
-        <activity android:name=".Acelerometro" />
-        <activity android:name=".Proximidad"></activity>
     </application>
 
 </manifest>
