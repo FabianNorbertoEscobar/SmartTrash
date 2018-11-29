@@ -65,34 +65,6 @@ public class ControlarBT extends AppCompatActivity {
         SensorGiroscopo = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         VerificarEstadoSensores();
 
-        bluetoothIn = new Handler() {
-            public void handleMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {
-                    String readMessage = (String) msg.obj;
-                    DataStringIN.append(readMessage);
-
-                    int endOfLineIndex = DataStringIN.indexOf("#");
-
-                    if (endOfLineIndex > 0) {
-                        String dataInPrint = DataStringIN.substring(0, endOfLineIndex);
-
-                        if(dataInPrint.equals("v")){
-                            TxtTachoLleno.setVisibility(View.INVISIBLE);
-                        }
-
-                        if(dataInPrint.equals("l")){
-                            TxtTachoLleno.setVisibility(View.VISIBLE);
-                        }
-
-                        DataStringIN.delete(0, DataStringIN.length());
-                    }
-                }
-            }
-        };
-
-        btAdapter = BluetoothAdapter.getDefaultAdapter(); // Obtiene Bluetooth adapter
-        VerificarEstadoBT();
-
         //-----------LISTENERS BOTONES--------
 
         BtnDesconectarBT.setOnClickListener(new View.OnClickListener() {
