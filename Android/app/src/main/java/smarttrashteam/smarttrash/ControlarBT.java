@@ -115,13 +115,7 @@ public class ControlarBT extends AppCompatActivity {
         BtnMarchaImperial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
                     MiConexionBT.write("m");
-                    btSocket.close();
-                }
-
-                catch (IOException e)
-                { Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_SHORT).show();}
             }
         });
         //-------------FIN LISTENERS----------
