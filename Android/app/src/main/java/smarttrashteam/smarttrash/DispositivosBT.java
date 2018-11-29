@@ -70,8 +70,7 @@ public class DispositivosBT extends AppCompatActivity {
 
             // Realiza un intent para iniciar la siguiente actividad
             // mientras toma un EXTRA_DEVICE_ADDRESS que es la dirección MAC.
-            //Intent i = new Intent(DispositivosBT.this, ControlarBT.class);
-            Intent i = new Intent(DispositivosBT.this, MenuAcciones.class);
+            Intent i = new Intent(DispositivosBT.this, ControlarBT.class);
             i.putExtra(EXTRA_DEVICE_ADDRESS, address);
             startActivity(i);
         }

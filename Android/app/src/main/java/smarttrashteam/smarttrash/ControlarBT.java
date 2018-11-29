@@ -29,8 +29,6 @@ public class ControlarBT extends AppCompatActivity {
 
     //-------------------------------------------
     private boolean TapaAbierta;
-    private BluetoothAdapter btAdapter = null;
-    private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
     private ConnectedThread MiConexionBT;
     private SensorManager sensorManager;
@@ -78,8 +76,6 @@ public class ControlarBT extends AppCompatActivity {
                     if (endOfLineIndex > 0) {
                         String dataInPrint = DataStringIN.substring(0, endOfLineIndex);
 
-                        //TxtDatos.setText("Dato: " + dataInPrint);
-
                         if(dataInPrint.equals("v")){
                             TxtTachoLleno.setVisibility(View.INVISIBLE);
                         }
@@ -94,7 +90,7 @@ public class ControlarBT extends AppCompatActivity {
             }
         };
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter(); // get Bluetooth adapter
+        btAdapter = BluetoothAdapter.getDefaultAdapter(); // Obtiene Bluetooth adapter
         VerificarEstadoBT();
 
         //-----------LISTENERS BOTONES--------
@@ -195,11 +191,6 @@ public class ControlarBT extends AppCompatActivity {
 
             @Override
             public void onShake(int count) {
-//                if(TxtSacudida.getText().equals("Abre")){
-//                    TxtSacudida.setText("Cierra");
-//                }else{
-//                    TxtSacudida.setText("Abre");
-//                }
                 if(TapaAbierta == false){
                     MiConexionBT.write("a");
                     TapaAbierta = true;
