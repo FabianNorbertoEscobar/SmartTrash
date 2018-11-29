@@ -70,7 +70,7 @@ void setup(){
 
   //inicializar componentes
   Serial.begin(9600);
-  //servo.write(180);
+  servo.write(180);
   digitalWrite(ledVerde, HIGH);
   bluetooth.begin(38400);
   
@@ -80,9 +80,6 @@ void setup(){
   }
   delay(50);
   milisAct = 0;
-  tone(piezoBuzzer, 440, 300);
-  noTone(piezoBuzzer);
-  tone(piezoBuzzer, 300, 440);
 }
 
 void loop(){
@@ -129,7 +126,10 @@ void modoSensores(){
 }
 
 boolean detectaProximidad(){
-  return digitalRead(pir1) == HIGH || digitalRead(pir2)== HIGH;
+  if(digitalRead(pir1) == HIGH || digitalRead(pir2)== HIGH)
+    return true;
+  else
+    return false;
 }
 
 boolean tachoLleno(){  
@@ -189,16 +189,9 @@ void vaciarTacho(){
   }
   digitalWrite(ledRojo, LOW);
   cerrarTacho();
-  enviarComandoBT('v');
-}
-
-boolean muchaLuz(){
-  Serial.println(analogRead(fotoResistor));
-  return analogRead(fotoResistor) > 920 && analogRead(fotoResistor) < 1000;
 }
 
 boolean pocaLuz(){
-  Serial.println(analogRead(fotoResistor));
   return analogRead(fotoResistor) > 920 && analogRead(fotoResistor) < 1000;
 }
 
@@ -222,7 +215,7 @@ void darkvioletRGB(){
 
 void amarilloRGB(){
   digitalWrite(rgbRojo, 255);
-  digitalWrite(rgbVerde, 255);
+  digitalWrite(rgbVerde, 233);
   digitalWrite(rgbAzul, 0);
 }
 
@@ -240,10 +233,10 @@ void recibirComandoBT(){
         vaciarTacho();
         break;
       case 'j':
-        tachoLoco();
+        modoJuego();
         break;
-      case 'm':
-        modoMarcha();
+      case 's':
+        tachoLoco();
         break;
       case 'l':
         amarilloRGB();
@@ -255,13 +248,7 @@ void recibirComandoBT(){
   }
 }
 
-void enviarComandoBT(char comando){
-  if(bluetooth.available() > 0){
-    bluetooth.write(comando);
-  }
-}
-
-void modoMarcha(){
+void modoJuego(){
   darkvioletRGB();
   marchaImperial();
   magentaRGB();
